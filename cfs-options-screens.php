@@ -123,7 +123,7 @@ class CFS_Options_Screens {
 		$heading = __( 'Options' );
 
 		// determine which screen we're on
-		if ( isset( $this->screens ) ) {
+		if ( isset( $this->screens ) && is_object( $post ) ) {
 			foreach ( $this->screens as $screen ) {
 				if ( $post->ID == $screen['id'] ) {
 					$heading = $screen['page_title'];
@@ -171,7 +171,11 @@ class CFS_Options_Screens {
 
 				if ( empty( $screen ) ) {
 					// post doesn't exist, create and flag it
-					$this->screens[ $screen_key ]['id'] = wp_insert_post( array( 'post_title' => $this->screens[ $screen_key ]['name'], 'post_type' => $this->post_type ) );
+					$this->screens[ $screen_key ]['id'] = wp_insert_post(
+						array(
+							'post_title' => sanitize_text_field( $this->screens[ $screen_key ]['name'] ),
+							'post_type'  => sanitize_text_field( $this->post_type ) )
+						);
 				} else {
 					$this->screens[ $screen_key ]['id'] = absint( $screen->ID );
 				}
